@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2026
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SortWcf", "WcfSortTest\SortWcf.csproj", "{E5964B2F-8528-4937-BFC6-93D3B0161070}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SortClient", "SortClient\SortClient.csproj", "{5F831973-37CC-4411-A006-19581DD3DE49}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E5964B2F-8528-4937-BFC6-93D3B0161070}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5964B2F-8528-4937-BFC6-93D3B0161070}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5964B2F-8528-4937-BFC6-93D3B0161070}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5964B2F-8528-4937-BFC6-93D3B0161070}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F831973-37CC-4411-A006-19581DD3DE49}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F831973-37CC-4411-A006-19581DD3DE49}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F831973-37CC-4411-A006-19581DD3DE49}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F831973-37CC-4411-A006-19581DD3DE49}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {14C0C26A-4FE3-4F53-A38D-A5259628A025}
+	EndGlobalSection
+EndGlobal
