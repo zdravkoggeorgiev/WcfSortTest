@@ -15,17 +15,15 @@ namespace SortClient
     {
         #region Static Private Fields
 
+        // Variables, used for communication between Threads
         private static Guid _uid1;
-
         private static bool _IsBGThreadSent = false;
         private static bool _IsClient1Ended = false;
 
         // Unsorted arrays of strings, to be sent to the service and to be sort
         private static string[] _unsortArr1 = { "Searobin", "Bluefish", "Dolphin", "Gag Grouper", "Hogfish", "King Mackerel", "Knobbed Porgy",
             "Red Snapper", "Vermillion Snapper", "Wahoo", "Yellowedge Grouper", "4632", "Spottail Pinfish", "Yellowtail Snapper", "019294", "Red Grouper" };
-
         private static string[] _unsortArr2 = { "White Grunt", "123", "43534", "Silver Snapper", "315", "Silver Snapper" };
-
         private static string[] _unsortArr3 = { "Speckled Hind", "715", "Blue Marlin", "Sailfish", "White Marlin", "Arowana", "Bluegill",
             "Lampfish", "Minnow of the deep", "Goblin shark", "Flathead catfish", "Freshwater hatchetfish", "Duckbill", "Loach catfish", "29243", "Swordfish" };
 
@@ -40,6 +38,9 @@ namespace SortClient
 
         #endregion
 
+        /// <summary>
+        /// A simple Console WCF Client Application, to test base WCF funcionality. Personally, I preffer to use tests for this.
+        /// </summary>
         static void Main(string[] args)
         {
             SortingServiceClient clientSort1 = new SortingServiceClient("BasicHttpBinding_ISortingService");
@@ -80,6 +81,10 @@ namespace SortClient
 
         #region Static Helper Functions
 
+        /// <summary>
+        /// Puts data into Stream in a background thread. Takes parameters from statics (_uid1) and (_unsortArr2).
+        /// Useful only for testing.
+        /// </summary>
         protected static void PutStreamBGThread()
         {
             SortingServiceClient clientSortBGThread = new SortingServiceClient("BasicHttpBinding_ISortingService");
@@ -99,6 +104,12 @@ namespace SortClient
             TestCondition(shouldBeEmpty.Count() == 0, "Sorted stream _uid1 ended.");
         }
 
+        /// <summary>
+        /// Gets data from WCF Server - Sorted Stream of text lines
+        /// </summary>
+        /// <param name="UID">Guid of already sent sequences to WCF Server. </param>
+        /// <param name="clientSort">Instance of SortingServiceClient to be used for connection.</param>
+        /// <returns> Sorted data from WCF Service </returns>
         protected static IEnumerable<string>  GetSortedStream(Guid UID, SortingServiceClient clientSort)
         {
             using (Stream streamSorted = clientSort.GetSortedStream(UID))
@@ -116,6 +127,11 @@ namespace SortClient
             }
         }
 
+        /// <summary>
+        /// Used for Application early end on wrong condition.
+        /// </summary>
+        /// <param name="isOk"> boolean or function with boolean result, to be tested </param>
+        /// <param name="msg"> Message in Console on success. Also used for Exception message, on test IsOk fail. </param>
         protected static void TestCondition(bool isOk, string msg)
         {
             if (isOk)

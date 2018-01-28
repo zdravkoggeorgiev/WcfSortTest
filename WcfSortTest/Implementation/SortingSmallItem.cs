@@ -8,6 +8,10 @@ using WcfSortTest.Utils;
 
 namespace WcfSortTest
 {
+    /// <summary>
+    /// In-Memory implementation of ISortingItem, for small quantities of data, up to 100MB.
+    /// For bigger data, it's supposed to use also file system, to store items to be sorted.
+    /// </summary>
     public class SortingSmallItem : ISortingItem
     {
         #region Private Fields
@@ -17,9 +21,12 @@ namespace WcfSortTest
         private bool _isSorted = true;
         private bool _isDisposing = false;
 
+        // Locking objects, per instance, because there can be many instances of this class
         private object _sortedLock = new Object();
         private object _queueLock = new Object();
 
+        // storage for items, _sortedItems are sorted ( or in process)
+        // _queueItems is used when main container (_sortedItems) is busy
         private string[] _sortedItems = new string[0];
         private string[] _queueItems = null;
 
@@ -27,12 +34,16 @@ namespace WcfSortTest
 
         #region Public Fields
 
+        /// <inheritdoc />
         public Guid UID { get { return _guid; } }
 
         #endregion
 
         #region Private Methods
 
+        /// <summary>
+        /// Sort currently collected items, bearing in mind multitreading of WCF Service
+        /// </summary>
         private void SortItems()
         {
             if (_isSorting || _isDisposing)
@@ -59,7 +70,7 @@ namespace WcfSortTest
                 }
                 finally
                 {
-                    // Be sure to turn the flag off on exit
+                    // Be sure to turn the flag back on exit
                     _isSorting = false;
                 }
             }
@@ -69,13 +80,14 @@ namespace WcfSortTest
 
         #region Public Methods
 
+        /// <inheritdoc />
         public void AddItems(string[] newItems)
         {
             if (newItems == null || newItems.Length == 0 || _isDisposing)
                 return;
 
             // if sorting is in progress, it's impossible to add new items to the main container(_sortedItems)
-            // and we will add new items into the queue container (_queueItems)
+            // and we will add new items into the queue container (_queueItems) and will sort them later
             if (_isSorting)
             {
                 lock (_queueLock)
@@ -91,14 +103,15 @@ namespace WcfSortTest
                     Array.Sort(_sortedItems);
                 }
             }
-
         }
 
+        /// <inheritdoc />
         public int CountLines()
         {
             return _sortedItems.Length + (_queueItems?.Length) ?? 0;
         }
 
+        /// <inheritdoc />
         public void Dispose()
         {
             _isDisposing = true;
@@ -106,6 +119,7 @@ namespace WcfSortTest
             _sortedItems = null;
         }
 
+        /// <inheritdoc />
         public Stream GetSortedItems()
         {
             MemoryStream resultStream = null;

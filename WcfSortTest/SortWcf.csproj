@@ -68,7 +68,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Interfaces\ISortingItem.cs" />
-    <Compile Include="Implementation\SortingStores.cs" />
     <Compile Include="Implementation\SortingSmallItem.cs" />
     <Compile Include="SortingService.svc.cs">
       <DependentUpon>SortingService.svc</DependentUpon>
