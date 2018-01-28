@@ -1,9 +1,10 @@
 # Solution WcfSortTest
 
-### Small WCF Service and even smaller Console client to consume the Service.
+### Small WCF Service **SortWcf** and even smaller Console client **SortClient** to consume the Service.
 >Implements WCF Service to store, sort and retrieve string streams.
 Can have multiple streams at once, distinguished by UID.
 Can have multiple calls to same stream to add new data.
+Planned to make **SortOnFileSystem** project to sort big data 16GB+
 
 ### About sorting big data
 * Planned to switch Sorting Items container, when items become too many, to leave In-Memory container, and to start use file system too.
