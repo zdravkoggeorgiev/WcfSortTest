@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SortWcf", "WcfSortTest\SortWcf.csproj", "{E5964B2F-8528-4937-BFC6-93D3B0161070}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SortClient", "SortClient\SortClient.csproj", "{5F831973-37CC-4411-A006-19581DD3DE49}"
+	ProjectSection(ProjectDependencies) = postProject
+		{E5964B2F-8528-4937-BFC6-93D3B0161070} = {E5964B2F-8528-4937-BFC6-93D3B0161070}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

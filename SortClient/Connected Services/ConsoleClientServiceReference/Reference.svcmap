@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ReferenceGroup xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" ID="91083246-7e52-41ce-b516-d79941bca7a4" xmlns="urn:schemas-microsoft-com:xml-wcfservicemap">
+  <ClientOptions>
+    <GenerateAsynchronousMethods>false</GenerateAsynchronousMethods>
+    <GenerateTaskBasedAsynchronousMethod>true</GenerateTaskBasedAsynchronousMethod>
+    <EnableDataBinding>true</EnableDataBinding>
+    <ExcludedTypes />
+    <ImportXmlTypes>false</ImportXmlTypes>
+    <GenerateInternalTypes>false</GenerateInternalTypes>
+    <GenerateMessageContracts>false</GenerateMessageContracts>
+    <NamespaceMappings />
+    <CollectionMappings />
+    <GenerateSerializableTypes>true</GenerateSerializableTypes>
+    <Serializer>Auto</Serializer>
+    <UseSerializerForFaults>true</UseSerializerForFaults>
+    <ReferenceAllAssemblies>true</ReferenceAllAssemblies>
+    <ReferencedAssemblies />
+    <ReferencedDataContractTypes />
+    <ServiceContractMappings />
+  </ClientOptions>
+  <MetadataSources>
+    <MetadataSource Address="http://localhost:49172/SortingService.svc" Protocol="http" SourceId="1" />
+  </MetadataSources>
+  <Metadata>
+    <MetadataFile FileName="SortingService.wsdl" MetadataType="Wsdl" ID="c2e80b70-0b42-4783-b0c9-949475b6e9f1" SourceId="1" SourceUrl="http://localhost:49172/SortingService.svc?wsdl" />
+    <MetadataFile FileName="SortingService.disco" MetadataType="Disco" ID="71eb1c28-3084-47db-8ae3-ea4b7a07c714" SourceId="1" SourceUrl="http://localhost:49172/SortingService.svc?disco" />
+    <MetadataFile FileName="SortingService.xsd" MetadataType="Schema" ID="9dd332cd-1cf5-421b-91ac-7fe2980bd414" SourceId="1" SourceUrl="http://localhost:49172/SortingService.svc?xsd=xsd2" />
+    <MetadataFile FileName="SortingService1.xsd" MetadataType="Schema" ID="235b0b68-afd5-4fe9-ad60-fd8f1bcfc50f" SourceId="1" SourceUrl="http://localhost:49172/SortingService.svc?xsd=xsd3" />
+    <MetadataFile FileName="SortingService2.xsd" MetadataType="Schema" ID="04a689cc-4807-46f7-ac92-c4ee75c0cd94" SourceId="1" SourceUrl="http://localhost:49172/SortingService.svc?xsd=xsd0" />
+    <MetadataFile FileName="SortingService3.xsd" MetadataType="Schema" ID="48b80ac5-fdd2-4575-8695-a7f898fd8f78" SourceId="1" SourceUrl="http://localhost:49172/SortingService.svc?xsd=xsd1" />
+  </Metadata>
+  <Extensions>
+    <ExtensionFile FileName="configuration91.svcinfo" Name="configuration91.svcinfo" />
+    <ExtensionFile FileName="configuration.svcinfo" Name="configuration.svcinfo" />
+  </Extensions>
+</ReferenceGroup>

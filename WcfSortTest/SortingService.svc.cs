@@ -13,23 +13,26 @@ namespace WcfSortTest
     {
         public Guid BeginStream()
         {
-            Guid newGuid = Guid.NewGuid();
-            return newGuid;
-        }
-
-        public void EndStream(Guid streamGuid)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Stream GetSortedStream(Guid streamGuid)
-        {
-            throw new NotImplementedException();
+            SortingStores stores = new SortingStores();
+            return stores.BeginStream();
         }
 
         public void PutStreamData(Guid streamGuid, string[] text)
         {
-            throw new NotImplementedException();
+            SortingStores stores = new SortingStores();
+            stores.PutStreamData(streamGuid, text);
+        }
+
+        public Stream GetSortedStream(Guid streamGuid)
+        {
+            SortingStores stores = new SortingStores();
+            return stores.GetSortedStream(streamGuid);
+        }
+
+        public void EndStream(Guid streamGuid)
+        {
+            SortingStores stores = new SortingStores();
+            stores.EndStream(streamGuid);
         }
     }
 }
