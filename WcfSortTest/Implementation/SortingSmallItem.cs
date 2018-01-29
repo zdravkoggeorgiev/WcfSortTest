@@ -122,6 +122,7 @@ namespace WcfSortTest
 
             SortItems();
 
+            // ZDGV Add reading (write-protect) lock here
             if (_sortedItems?.Length > 0 && !_isDisposing)
             {
                 resultStream = new MemoryStream();
