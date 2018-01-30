@@ -67,6 +67,7 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Implementation\SortMapItem.cs" />
     <Compile Include="Interfaces\ISortingItem.cs" />
     <Compile Include="Implementation\SortingSmallItem.cs" />
     <Compile Include="SortingService.svc.cs">
