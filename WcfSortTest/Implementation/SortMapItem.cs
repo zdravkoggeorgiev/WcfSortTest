@@ -6,10 +6,14 @@ using System.Web;
 
 namespace WcfSortTest
 {
+    /// <summary>
+    /// Maping  implementation of ISortingItem, using binary search and sort, to order data.
+    /// </summary>
     public class SortMapItem : ISortingItem
     {
         #region Private Fields
 
+        // Used to unique distinguish different instances.
         private Guid _guid = Guid.NewGuid();
         private ConcurentArrays _concurentArrays = new ConcurentArrays();
 

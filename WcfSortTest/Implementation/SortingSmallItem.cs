@@ -5,9 +5,10 @@ using WcfSortTest.Utils;
 namespace WcfSortTest
 {
     /// <summary>
-    /// In-Memory implementation of ISortingItem, for small quantities of data, up to 100MB.
+    /// In-Memory implementation of ISortingItem, for small quantities of data.
     /// For bigger data, it's supposed to use also file system, to store items to be sorted.
     /// </summary>
+    [Obsolete]
     public class SortingSmallItem : ISortingItem
     {
         #region Private Fields
