@@ -18,7 +18,7 @@ namespace WcfSortTest
         /// <inheritdoc />
         public Guid BeginStream()
         {
-            ISortingItem sortingItem = new SortingSmallItem();
+            ISortingItem sortingItem = new SortMapItem();
 
             _store.TryAdd(sortingItem.UID, sortingItem);
             return sortingItem.UID;
