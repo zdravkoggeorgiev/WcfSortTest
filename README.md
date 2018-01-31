@@ -16,3 +16,6 @@ Planned to make **SortOnFileSystem** project to sort big data 16GB+
 ### About sorting big data
 * Planned to switch Sorting Items container, when items become too many, to leave In-Memory container, and to start use file system too.
 * File-system store is not yet implemented.
+
+### Style Convention is like one my last project
+> It has rare-to-use in C# patterns, like underscored private members. This can easily be adjusted, when i see your code.
