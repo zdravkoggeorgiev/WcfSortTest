@@ -151,14 +151,14 @@ namespace WcfSortTest
         private int BinarySearchMap(IntInt[] arrayMap, IntInt item, int low, int high)
         {
             if (high <= low)
-                return (CompareContent(arrayMap, item, low) > 0) ? (low + 1) : low;
+                return (CompareContent(item, arrayMap[low]) > 0) ? (low + 1) : low;
 
             int mid = (low + high) / 2;
 
-            if (CompareContent(arrayMap, item, mid) == 0)
+            if (CompareContent(item, arrayMap[mid]) == 0)
                 return mid + 1;
 
-            if (CompareContent(arrayMap, item, mid) > 0)
+            if (CompareContent(item, arrayMap[mid]) > 0)
                 return BinarySearchMap(arrayMap, item, mid + 1, high);
 
             return BinarySearchMap(arrayMap, item, low, mid - 1);
@@ -196,15 +196,13 @@ namespace WcfSortTest
         /// <summary>
         /// Comapre the content in unordered string array, based on index parameters.
         /// </summary>
-        /// <param name="arrayMap">sortMap array</param>
-        /// <param name="item">Item to be compared in IntInt</param>
-        /// <param name="mapIndex2">Index of second Item, to be compared</param>
+        /// <param name="item1">First Item to be compared </param>
+        /// <param name="item2">Second Item, to be compared</param>
         /// <returns></returns>
-        private int CompareContent(IntInt[] arrayMap, IntInt item, int mapIndex2)
+        private int CompareContent(IntInt item1, IntInt item2)
         {
-            // TODO: ZDGV use IntInt directly items instead of array + index, for comparition.
-            string a1 = _containersData[item.ContainerIndex][item.ArrayIndex];
-            string a2 = _containersData[arrayMap[mapIndex2].ContainerIndex][arrayMap[mapIndex2].ArrayIndex];
+            string a1 = _containersData[item1.ContainerIndex][item1.ArrayIndex];
+            string a2 = _containersData[item2.ContainerIndex][item2.ArrayIndex];
             return a1.CompareTo(a2);
         }
 
