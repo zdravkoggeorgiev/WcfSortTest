@@ -1,11 +1,7 @@
 ﻿using NUnit.Framework;
-using WcfSortTest;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using SortClient.ConsoleClientServiceReference;
 using System.IO;
 
 namespace WcfSortTest.Tests
