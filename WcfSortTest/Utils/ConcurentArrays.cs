@@ -9,19 +9,19 @@ using WcfSortTest.Utils;
 namespace WcfSortTest
 {
     /// <summary>
-    /// Collection store for multiple arrays, to be used in multi-thread environment.
-    /// Arrays content is immutable ( not constrained yet ), thus reading is fast and without lockings
+    /// Collection store for multiple sorted arrays, to be used in multi-thread environment.
+    /// <para> Arrays content is immutable ( not constrained yet ), thus reading is fast and without lockings </para>
     /// Adding new array makes only a short lock, for adding new array reference to list.
     /// Map of sorting is used , instead to sort real data. Map is held in Additional array, with indexes to real data.
     /// Each time read is need, a new copy of map is made, not to interfere with new additions to arrays.
-    /// !!! CON: storage is simple arrays, instead of B-Tree or Red-Black-Tree. 
+    /// !!! CON: Map is a simple array, instead of B-Tree or Red-Black-Tree. 
     /// Will make it with more efficient storage, if time allows it
     /// </summary>
     public class ConcurentArrays : IDisposable
     {
         #region Private Fields
 
-        // ConcurrentBag seems overhead, need to test our data is immutable and doesn't change
+        // ConcurrentBag seems overhead, need to test. Our data is immutable and doesn't change
         private volatile List<string[]> _containersData = new List<string[]>();
         private volatile List<int> _containersLengths = new List<int>();
 
@@ -29,7 +29,7 @@ namespace WcfSortTest
         private volatile IntInt[] _sortedMap = new IntInt[0];
         private volatile int _itemsAllCount = 0;
         private volatile int _lastSortedContainer = -1; // Container 0 is not yet sorted
-        private bool _isDisposing = false;
+        private bool _isDisposed = false;
 
         // locking objects
         private object _lockAdd = new object();
@@ -49,12 +49,12 @@ namespace WcfSortTest
         {
             get
             {
-                return GetByIndexRaw(index);
+                return GetBySingleIndex(index);
             }
         }
 
         /// <summary>
-        /// Allow access to data to all containers as usual array, by IntInt index, e.g. concurentArr[currentIndex]
+        /// Allow unsorted access to data to all containers as usual array, by IntInt index, e.g. concurentArr[currentIndex]
         /// </summary>
         /// <param name="index">IntInt index of item to retrieve </param>
         /// <returns>Returns string item for index position </returns>
@@ -71,15 +71,15 @@ namespace WcfSortTest
         #region Private/Protected Methods
 
         /// <summary>
-        /// Generates new Sorted Map of data. Usually used after new data additions.
+        /// Generates new Sorted Map of data. Generation is made in a copy, not to interfere with readings. Usually used after new data additions.
         /// </summary>
         private void SortMapOfArrays()
         {
-            if (_itemsAllCount > _sortedMap.Length)
+            if (_itemsAllCount > _sortedMap.Length && !_isDisposed)
             {
                 lock (_lockMap)
                 {
-                    if (_itemsAllCount > _sortedMap.Length)
+                    if (_itemsAllCount > _sortedMap.Length && !_isDisposed)
                     {
                         int _containersCount = _containersData.Count;
                         int _lastIndex = _sortedMap.Length;
@@ -99,6 +99,7 @@ namespace WcfSortTest
 
                         this.InsertionSortMap(arrayNewMap, _sortedMap.Length);
 
+                        // Apply sorting as current Map
                         _sortedMap = arrayNewMap;
                         _lastSortedContainer = _containersCount - 1;
                     }
@@ -107,15 +108,15 @@ namespace WcfSortTest
         }
 
         /// <summary>
-        /// Duplicate current sorted map. Purpose is not to work with original one, to avoid exceed locking.
+        /// Duplicate current sorted map. Purpose is not to work with original one, to avoid locking/ access violations on sortings.
         /// </summary>
         /// <returns></returns>
         private IntInt[] GetCurrentMapCopy()
         {
-            IntInt[] currentMap;
+            IntInt[] currentMap = new IntInt[_sortedMap.Length] ;
             lock (_lockMap)
             {
-                currentMap = (IntInt[])_sortedMap.Clone();
+                Array.Copy(_sortedMap, currentMap, _sortedMap.Length);
             }
             return currentMap;
         }
@@ -126,11 +127,12 @@ namespace WcfSortTest
         /// </summary>
         /// <param name="index">index of item to retrieve </param>
         /// <returns>Returns string item for index position </returns>
-        protected string GetByIndexRaw(int index)
+        protected string GetBySingleIndex(int index)
         {
             if (index < 0 || index > _itemsAllCount)
                 throw new System.ArgumentOutOfRangeException("index parameter is out of range.");
 
+            // Find to which container Index belongs
             int curContainer = 0;
             while (index > _containersLengths[curContainer] - 1)
             {
@@ -216,6 +218,9 @@ namespace WcfSortTest
         /// <param name="item"></param>
         public void Add(string[] item)
         {
+            if (_isDisposed)
+                return;
+
             lock (_lockAdd)
             {
                 _containersData.Add(item);
@@ -234,10 +239,9 @@ namespace WcfSortTest
         {
             MemoryStream resultStream = new MemoryStream();
 
-            if (_sortedMap.Length != 0 && !_isDisposing)
+            if (_sortedMap.Length != 0 && !_isDisposed)
             {
                 IntInt[] currentSortedMap = GetCurrentMapCopy();
-        
                 try
                 {
                     int offset = 0;
@@ -262,7 +266,7 @@ namespace WcfSortTest
         /// <inheritdoc />
         public void Dispose()
         {
-            _isDisposing = true;
+            _isDisposed = true;
             lock (_lockMap)
             {
                 _sortedMap = null;

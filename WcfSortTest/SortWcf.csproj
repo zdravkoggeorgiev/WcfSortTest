@@ -70,7 +70,7 @@
     <Compile Include="Utils\ConcurentArrays.cs" />
     <Compile Include="Implementation\SortMapItem.cs" />
     <Compile Include="Interfaces\ISortingItem.cs" />
-    <Compile Include="Implementation\SortingSmallItem.cs" />
+    <Compile Include="Implementation\OldSortingItem.cs" />
     <Compile Include="SortingService.svc.cs">
       <DependentUpon>SortingService.svc</DependentUpon>
     </Compile>

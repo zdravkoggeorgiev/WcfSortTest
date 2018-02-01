@@ -9,7 +9,7 @@ namespace WcfSortTest
     /// For bigger data, it's supposed to use also file system, to store items to be sorted.
     /// </summary>
     [Obsolete]
-    public class SortingSmallItem : ISortingItem
+    public class OldSortingItem : ISortingItem
     {
         #region Private Fields
 
