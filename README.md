@@ -29,4 +29,4 @@ Can have multiple calls to same stream to add new data.
 * If there is low selectivity ( often repeats in the input data), this algorithm could not be so good.
 
 ### Style Convention is like one my last project
-> It has rare-to-use in C# patterns, like underscored private members. This can easily be adjusted, when i see your code.
+* It has rare-to-use in C# patterns, like underscored private members. This can easily be adjusted, when i see your code.
