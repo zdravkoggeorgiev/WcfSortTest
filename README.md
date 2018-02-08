@@ -5,13 +5,10 @@
 Can have multiple streams at once, distinguished by UID.
 Can have multiple calls to same stream to add new data.
 
-### Project priorities
-> Tried to be all: memory-efficient, speed-efficient, multitasking-efficient. And may be none of them is good enough.
-
 ### The focus is on:
-> Running in concurrent environment, where multiple users connect simultaneously to receive sorted data
-Optimize for speed and memory/resources used
-Speed on sorting operation
+* Running in concurrent environment, where multiple users connect simultaneously to receive sorted data
+* Optimize for speed and memory/resources used
+* Speed on sorting operation
 
 ### This is achieved by:
 * Data is stored as its arrived: unsorted, each packet (array) is saved as-is, in different unsorted array.
