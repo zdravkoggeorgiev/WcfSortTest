@@ -32,8 +32,18 @@ namespace WcfSortTest.Tests
         [Test()]
         public void AddItemsTest()
         {
-            // TODO: Finish this test later
-            Assert.Pass();
+            var numberOfArraysToAdd = 5;
+            var totalLinesAdded = 0;
+
+            using (SortMapItem sortMapItem = new SortMapItem())
+            {
+                for (int i = 0; i < numberOfArraysToAdd; i++)
+                {
+                    sortMapItem.AddItems(_unsortArr1);
+                    totalLinesAdded += _unsortArr1.Length;
+                }
+                Assert.AreEqual(totalLinesAdded, sortMapItem.CountLines());
+            }
         }
 
         /// <summary>
@@ -42,44 +52,93 @@ namespace WcfSortTest.Tests
         [Test()]
         public void GetSortedItemsTest()
         {
-            SortMapItem sortMapItem = new SortMapItem();
-            Assert.IsNotNull(sortMapItem.UID);
-            Assert.AreNotEqual(Guid.Empty, sortMapItem.UID);
+            using (SortMapItem sortMapItem = new SortMapItem())
+            {
+                Assert.IsNotNull(sortMapItem.UID);
+                Assert.AreNotEqual(Guid.Empty, sortMapItem.UID);
 
-            sortMapItem.AddItems(_unsortArr1);
-            var countLines = sortMapItem.CountLines();
-            var expectedCount = _unsortArr1.Length;
-            Assert.AreEqual(expectedCount, countLines);
+                sortMapItem.AddItems(_unsortArr1);
+                var countLines = sortMapItem.CountLines();
+                var expectedCount = _unsortArr1.Length;
+                Assert.AreEqual(expectedCount, countLines);
 
-            sortMapItem.AddItems(_unsortArr3);
-            countLines = sortMapItem.CountLines();
-            expectedCount += _unsortArr3.Length;
-            Assert.AreEqual(expectedCount, countLines);
+                sortMapItem.AddItems(_unsortArr3);
+                countLines = sortMapItem.CountLines();
+                expectedCount += _unsortArr3.Length;
+                Assert.AreEqual(expectedCount, countLines);
 
-            sortMapItem.AddItems(_unsortArr2);
-            countLines = sortMapItem.CountLines();
-            expectedCount += _unsortArr2.Length;
-            Assert.AreEqual(expectedCount, countLines);
+                sortMapItem.AddItems(_unsortArr2);
+                countLines = sortMapItem.CountLines();
+                expectedCount += _unsortArr2.Length;
+                Assert.AreEqual(expectedCount, countLines);
 
-            var resultsSorted = this.GetSortedStream(sortMapItem);
-            Assert.IsTrue(_sortedArr1.SequenceEqual(resultsSorted));
-
-            sortMapItem.Dispose();
+                var resultsSorted = this.GetSortedStream(sortMapItem);
+                Assert.IsTrue(_sortedArr1.SequenceEqual(resultsSorted));
+            }
             Assert.Pass("Arrays was sorted as expected");
         }
 
         [Test()]
         public void CountLinesTest()
         {
-            // TODO: Finish this test later
-            Assert.Pass();
+            using (SortMapItem sortMapItem = new SortMapItem())
+            {
+                sortMapItem.AddItems(_unsortArr1);
+                Assert.AreEqual(_unsortArr1.Length, sortMapItem.CountLines());
+            }
         }
 
         [Test()]
         public void DisposeTest()
         {
-            // TODO: Finish this test later
-            Assert.Pass();
+            SortMapItem sortMapItem = new SortMapItem();
+            try
+            {
+                sortMapItem.AddItems(_unsortArr1);
+                Assert.AreEqual(_unsortArr1.Length, sortMapItem.CountLines());
+            }
+            finally
+            {
+                sortMapItem.Dispose();
+            }
+
+            // Should have zero items, because dispose is passed
+            Assert.AreEqual(0, sortMapItem.CountLines());
+
+            // no data addition is allowed, after Dispose()
+            Assert.Throws<ObjectDisposedException>(() => sortMapItem.AddItems(_unsortArr1));
+
+            // no data access is allowed, after Dispose()
+            Assert.Throws<ObjectDisposedException>(() => sortMapItem.GetSortedItems());
+        }
+
+        [Test()]
+        public void SortingIntegrationTest()
+        {
+            using (SortMapItem sortMapItem = new SortMapItem())
+            {
+                Assert.IsNotNull(sortMapItem.UID);
+                Assert.AreNotEqual(Guid.Empty, sortMapItem.UID);
+
+                sortMapItem.AddItems(_unsortArr1);
+                var countLines = sortMapItem.CountLines();
+                var expectedCount = _unsortArr1.Length;
+                Assert.AreEqual(expectedCount, countLines);
+
+                sortMapItem.AddItems(_unsortArr3);
+                countLines = sortMapItem.CountLines();
+                expectedCount += _unsortArr3.Length;
+                Assert.AreEqual(expectedCount, countLines);
+
+                sortMapItem.AddItems(_unsortArr2);
+                countLines = sortMapItem.CountLines();
+                expectedCount += _unsortArr2.Length;
+                Assert.AreEqual(expectedCount, countLines);
+
+                var resultsSorted = this.GetSortedStream(sortMapItem);
+                Assert.IsTrue(_sortedArr1.SequenceEqual(resultsSorted));
+            }
+            Assert.Pass("Arrays was sorted as expected");
         }
 
         #region Private Helper Methods

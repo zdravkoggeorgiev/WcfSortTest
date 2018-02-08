@@ -71,12 +71,20 @@ namespace WcfSortTest
         /// </summary>
         private void SortMapOfArrays()
         {
-            if (_itemsAllCount > _sortedMap.Length && !_isDisposed)
+            // If is Disposed, operations over arrays are not allowed
+            if (_isDisposed)
+                throw new ObjectDisposedException("ConcurentArrays is already disposed.");
+
+            if (_itemsAllCount > _sortedMap.Length)
             {
                 lock (_lockMap)
                 {
-                    if (_itemsAllCount > _sortedMap.Length && !_isDisposed)
+                    if (_itemsAllCount > _sortedMap.Length)
                     {
+                        // If is Disposed, operations over arrays are not allowed
+                        if (_isDisposed)
+                            throw new ObjectDisposedException("ConcurentArrays is already disposed.");
+
                         int _containersCount = _containersData.Count;
                         int _lastIndex = _sortedMap.Length;
 
@@ -214,8 +222,9 @@ namespace WcfSortTest
         /// <param name="item"></param>
         public void Add(string[] item)
         {
+            // If is Disposed, new additions are not allowed
             if (_isDisposed)
-                return;
+                throw new ObjectDisposedException("ConcurentArrays is already disposed.");
 
             lock (_lockAdd)
             {
@@ -233,9 +242,13 @@ namespace WcfSortTest
         /// <returns></returns>
         public Stream GetSortedItems()
         {
+            // If is Disposed, operations over arrays are not allowed
+            if (_isDisposed)
+                throw new ObjectDisposedException("ConcurentArrays is already disposed.");
+
             MemoryStream resultStream = new MemoryStream();
 
-            if (_sortedMap.Length != 0 && !_isDisposed)
+            if (_sortedMap.Length != 0)
             {
                 IntInt[] currentSortedMap = GetCurrentMapCopy();
                 try

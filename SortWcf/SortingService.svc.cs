@@ -18,41 +18,71 @@ namespace WcfSortTest
         /// <inheritdoc />
         public Guid BeginStream()
         {
-            ISortingItem sortingItem = new SortMapItem();
+            try
+            {
+                ISortingItem sortingItem = new SortMapItem();
 
-            _store.TryAdd(sortingItem.UID, sortingItem);
-            return sortingItem.UID;
+                _store.TryAdd(sortingItem.UID, sortingItem);
+                return sortingItem.UID;
+            }
+            catch (Exception)
+            {
+                // Do some logging here. 
+                // Consider decorate result, to send error message to the client
+                return Guid.Empty;
+            }
         }
 
         /// <inheritdoc />
         public void PutStreamData(Guid streamGuid, string[] text)
         {
-            if (_store.TryGetValue(streamGuid, out ISortingItem sortingItem))
+            try
             {
-                sortingItem.AddItems(text);
+                if (_store.TryGetValue(streamGuid, out ISortingItem sortingItem))
+                {
+                    sortingItem.AddItems(text);
+                }
+            }
+            catch (Exception)
+            {
+                // Do some logging here. 
+                // Consider decorate result, to send error message to the client
             }
         }
 
         /// <inheritdoc />
         public Stream GetSortedStream(Guid streamGuid)
         {
-            if (_store.TryGetValue(streamGuid, out ISortingItem sortingItem))
+            try
             {
-                return sortingItem.GetSortedItems();
+                if (_store.TryGetValue(streamGuid, out ISortingItem sortingItem))
+                {
+                    return sortingItem.GetSortedItems();
+                }
             }
-            else
+            catch (Exception)
             {
-                return new MemoryStream();
+                // Do some logging here. 
+                // Consider decorate result, to send error message to the client
             }
+            return new MemoryStream();
         }
 
         /// <inheritdoc />
         public void EndStream(Guid streamGuid)
         {
-            if (_store.TryRemove(streamGuid, out ISortingItem sortingItem))
+            try
             {
-                sortingItem.Dispose();
-                sortingItem = null;
+                if (_store.TryRemove(streamGuid, out ISortingItem sortingItem))
+                {
+                    sortingItem.Dispose();
+                    sortingItem = null;
+                }
+            }
+            catch (Exception)
+            {
+                // Do some logging here. 
+                // Consider decorate result, to send error message to the client
             }
         }
 
