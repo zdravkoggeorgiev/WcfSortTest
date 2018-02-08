@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using WcfSortTest.Utils;
 
 namespace WcfSortTest
 {
@@ -16,7 +17,7 @@ namespace WcfSortTest
 
         #endregion
 
-        #region Public Fields
+        #region Public Fields/Methods
 
         /// <inheritdoc />
         public Guid UID { get { return _guid; } }
