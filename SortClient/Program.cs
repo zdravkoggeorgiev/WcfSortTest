@@ -7,6 +7,11 @@ using System.Threading;
 
 namespace SortClient
 {
+    /// <summary>
+    /// A simple Console WCF Client Application, to test base WCF funcionality. 
+    /// 2 Threads are used in total.
+    /// Personally, I preffer to use tests for this.
+    /// </summary>
     class Program
     {
         #region Static Private Fields
@@ -34,20 +39,18 @@ namespace SortClient
 
         #endregion
 
-        /// <summary>
-        /// A simple Console WCF Client Application, to test base WCF funcionality. Personally, I preffer to use tests for this.
-        /// </summary>
         static void Main(string[] args)
         {
+            // Initialize first client with _uid1
             SortingServiceClient clientSort1 = new SortingServiceClient("BasicHttpBinding_ISortingService");
             _uid1 = clientSort1.BeginStream();
             clientSort1.PutStreamData(_uid1, _unsortArr1);
 
-            // Send data from another thread, to same uid
+            // Send data from another thread, to same first client _uid1
             Thread sortThread = new Thread(PutStreamBGThread) { IsBackground = true };
             sortThread.Start();
 
-            // Start second client, to achieve second uid (uid2), sort small data, and close
+            // Start second client, with second uid (uid2), send and sort small data, then close
             SortingServiceClient clientSort2 = new SortingServiceClient("BasicHttpBinding_ISortingService");
             var uid2 = clientSort2.BeginStream();
             clientSort2.PutStreamData(uid2, _unsortArr3);
@@ -57,11 +60,11 @@ namespace SortClient
             clientSort2.Close();
             TestCondition(_sortedArr2.SequenceEqual(result2), "uid2 arrays was sorted as expected.");
 
-            // wait background thread to send it's data too.
+            // wait background thread to finish sending it's data to _uid1
             while (!_IsBGThreadSent)
                 Thread.Sleep(10);
 
-            // put last data to _uid1
+            // put last data to _uid1, then request sorted data and check it
             clientSort1.PutStreamData(_uid1, _unsortArr3);
             var result1 = GetSortedStream(_uid1, clientSort1).ToArray();
             clientSort1.EndStream(_uid1);
@@ -101,7 +104,7 @@ namespace SortClient
         }
 
         /// <summary>
-        /// Gets data from WCF Server - Sorted Stream of text lines
+        /// Gets data from WCF Server - Sorted Stream, and converts result to array with text lines
         /// </summary>
         /// <param name="UID">Guid of already sent sequences to WCF Server. </param>
         /// <param name="clientSort">Instance of SortingServiceClient to be used for connection.</param>
