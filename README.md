@@ -18,10 +18,10 @@ Can have multiple calls to same stream to add new data.
 * On reading, we copy current sorted map, and data is read sorted by map. This allows us to avoid collisions between read and write operations.
 * On sorting, we take only new unsorted data, we find their place in already sorted data ( by binary search, which is fast O(log n) operation ), and new data place is inserted into the map
 * There are simple nunit tests. I created them mostly for purpose on debugging. Each time to run WCF and Console Client was slow.
+* The main logic is in the file **ConcurentArrays.cs** 
 
 ### TODO: Because I have no enough time to devote to the tasks, some things are not done.
 * Insert into **Map**, currently is an insert into array, which is expensive operation **O(n)**. It should be done with **B-Tree** or **Red-Black-Tree**, so it becomes **O(log(n))**.
-* in file **ConcurentArrays.cs** ( the main worker), there are left behind 2 methods, related to Sorting, which could be good to move into external library/class.
 * I had no time to make big data ( >16GB ) sorting
 * My idea was to split incoming data, and to write (append) it to different files, unsorted. In first files all starting lines aaa to azz, in second baa to bzz, etc.
 * I will track the size of files, when size hits a limit ( like 500MB), then file will be split in 2 files. Like starting  **aaa** to **azz** -> **aaa** to **ass** and **att** to **azz**. If it becomes too big, split again, etc.
