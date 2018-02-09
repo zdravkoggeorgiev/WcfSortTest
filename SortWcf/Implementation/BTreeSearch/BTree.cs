@@ -6,22 +6,87 @@ using WcfSortTest.Utils;
 
 namespace WcfSortTest.BTreeSearch
 {
-    // The Binary tree itself
+    /// <summary>
+    /// A binart Tree implementation. Storing address to strings in List{string[]} container.
+    /// <para> In Nodes are stored addresses (IntInt) to data container. </para>
+    /// <para> Inserts are always sorted, comparing strings in container. </para>
+    /// </summary>
     public class BTree : IDisposable
     {
+        #region Fields
+
         private BNode _root = null;
         private bool _isDisposed = false;
         private List<string[]> _container2d;
 
         public int Count { get; private set; }
-        public BNode MostLeftNode { get; private set; }
 
+        #endregion
+
+        #region Constructors
+
+        // Disable empty constructor
+        private BTree() { }
+
+        /// <summary>
+        /// Creates new instance of BTree.
+        /// </summary>
+        /// <param name="container2d">Container with strings data. </param>
         public BTree(List<string[]> container2d)
         {
             _container2d = container2d;
             Count = 0;
-            MostLeftNode = null;
         }
+
+        #endregion
+
+        #region Public Methods
+
+        /// <summary>
+        /// Inserts new value ( address to string ) into BTree. Supports duplicates.
+        /// </summary>
+        public BNode Insert(IntInt valueNew)
+        {
+            // TODO: Add Exception and exception handling later
+            if (_isDisposed)
+                return null;
+
+            Count++;
+            return InsertInternal(ref _root, _root, valueNew);
+        }
+
+        /// <summary>
+        /// Read Addressed to data, sorting strings asceding.
+        /// </summary>
+        /// <returns></returns>
+        public IntInt[] ReadSortedValues()
+        {
+            // TODO: Add Exception and exception handling later, on Disposed use
+            if (_root == null || _isDisposed)
+                return null;
+
+            var sortedItems = ReadSorted(_root);
+
+            // enumerate lazy IEnumerable.
+            // TODO: Consider to avoid unnecessary cast
+            var result = sortedItems.ToArray();
+
+            return result;
+        }
+
+        /// <summary>
+        /// Disposes Tree, and disables further use.
+        /// </summary>
+        public void Dispose()
+        {
+            _isDisposed = true;
+            Count = 0;
+            DisposeTree(ref _root);
+        }
+        
+        #endregion
+
+        #region Private Methods
 
         /// <summary>
         /// Recursively inserts new value (address to string ) into the Tree.
@@ -33,11 +98,6 @@ namespace WcfSortTest.BTreeSearch
             if (tree == null)
             {
                 tree = new BNode(_container2d, valueNew, parent);
-
-                // Keep track of BNode with Miminal Value, for sake of reading all BTree sorted
-                if (MostLeftNode == null || MostLeftNode.CompareTo(valueNew) > 0)
-                    MostLeftNode = tree;
-
                 return tree;
             }
             else
@@ -56,28 +116,18 @@ namespace WcfSortTest.BTreeSearch
             }
         }
 
-        public IntInt[] ReadSortedValues()
-        {
-            if (_root == null)
-                return null;
-
-            var sortedItems = ReadSorted(_root);
-
-            // enumerate lazy IEnumerable.
-            // TODO: Consider to avoid unnecessary cast
-            var result = sortedItems.ToArray();
-
-            return result;
-        }
-
-        private static IEnumerable<IntInt> ReadSorted(BNode startNode)
+        /// <summary>
+        /// Reads BTree in sorted order.
+        /// </summary>
+        /// <param name="startNode">node to start, usually root</param>
+        private IEnumerable<IntInt> ReadSorted(BNode startNode)
         {
             // Firest return left childs,
             if (startNode.Left != null)
                 foreach (IntInt item in ReadSorted(startNode.Left))
                 {
                     yield return item;
-                }                
+                }
 
             // second return self values
             foreach (IntInt item in startNode.Values)
@@ -94,32 +144,9 @@ namespace WcfSortTest.BTreeSearch
         }
 
         /// <summary>
-        /// Inserts new value ( address to string ) into BTree. Supports duplicates
+        /// Nullify all nodes.
         /// </summary>
-        public BNode Insert(IntInt valueNew)
-        {
-            // TODO: Add Exception and exception handling later
-            if (_isDisposed)
-                return null;
-
-            Count++;
-            return InsertInternal(ref _root, _root, valueNew);
-        }
-
-        /// <summary>
-        /// Find value in tree. Return a reference to the node, or null, if missing
-        public BNode FindValue(IntInt value)
-        {
-            throw new NotImplementedException("later");
-        }
-
-        public void Dispose()
-        {
-            _isDisposed = true;
-            Count = 0;
-            DisposeTree(ref _root);
-        }
-
+        /// <param name="p">Start Node, to nullify all his children. </param>
         private void DisposeTree(ref BNode p)
         {
             if (p != null)
@@ -129,5 +156,8 @@ namespace WcfSortTest.BTreeSearch
                 p = null;
             }
         }
+
+        #endregion
+
     }
 }
