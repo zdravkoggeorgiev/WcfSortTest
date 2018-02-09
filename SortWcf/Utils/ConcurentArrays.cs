@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using WcfSortTest.BTreeSearch;
 
 namespace WcfSortTest.Utils
 {
@@ -18,11 +19,11 @@ namespace WcfSortTest.Utils
         #region Private Fields
 
         // ConcurrentBag seems overhead, need to test. Our data is immutable and doesn't change
-        private volatile List<string[]> _containersData = new List<string[]>();
-        private volatile List<int> _containersLengths = new List<int>();
+        private volatile List<string[]> _containersData;
+        private volatile List<int> _containersLengths;
 
         // Sorted Map of items. Accessing data through this index guaranties sorted data.
-        private volatile IntInt[] _sortedMap = new IntInt[0];
+        private volatile BTree _sortedMap;
         private volatile int _itemsAllCount = 0;
         private volatile int _lastSortedContainer = -1; // Container 0 is not yet sorted
         private bool _isDisposed = false;
@@ -30,6 +31,13 @@ namespace WcfSortTest.Utils
         // locking objects
         private object _lockAdd = new object();
         private object _lockMap = new object();
+
+        public ConcurentArrays()
+        {
+            _containersData =  new List<string[]>();
+            _containersLengths = new List<int>();
+            _sortedMap = new BTree(_containersData);
+        }
 
         #endregion
 
@@ -98,7 +106,7 @@ namespace WcfSortTest.Utils
 
             MemoryStream resultStream = new MemoryStream();
 
-            if (_sortedMap.Length != 0)
+            if (_sortedMap.Count != 0)
             {
                 IntInt[] currentSortedMap = GetCurrentMapCopy();
                 try
@@ -107,7 +115,7 @@ namespace WcfSortTest.Utils
                     for (int i = 0; i < currentSortedMap.Length; i++)
                     {
                         byte[] currentLine = System.Text.Encoding.UTF8.GetBytes(
-                            this[currentSortedMap[i]] + System.Environment.NewLine);
+                        this[currentSortedMap[i]] + System.Environment.NewLine);
                         resultStream.Write(currentLine, 0, currentLine.Length);
                         offset += currentLine.Length;
                     }
@@ -128,6 +136,7 @@ namespace WcfSortTest.Utils
             _isDisposed = true;
             lock (_lockMap)
             {
+                _sortedMap.Dispose();
                 _sortedMap = null;
             }
             lock (_lockMap)
@@ -151,37 +160,27 @@ namespace WcfSortTest.Utils
             if (_isDisposed)
                 throw new ObjectDisposedException("ConcurentArrays is already disposed.");
 
-            if (_itemsAllCount > _sortedMap.Length)
+            if (_itemsAllCount > _sortedMap.Count)
             {
                 lock (_lockMap)
                 {
-                    if (_itemsAllCount > _sortedMap.Length)
+                    if (_itemsAllCount > _sortedMap.Count)
                     {
                         // If is Disposed, operations over arrays are not allowed
                         if (_isDisposed)
                             throw new ObjectDisposedException("ConcurentArrays is already disposed.");
 
-                        int _containersCount = _containersData.Count;
-                        int _lastIndex = _sortedMap.Length;
-
-                        IntInt[] arrayNewMap = new IntInt[_itemsAllCount];
-                        Array.Copy(_sortedMap, arrayNewMap, _sortedMap.Length);
-
-                        // initialize new items in Sort Map with initial unsorted positions of new items
-                        for (int containerNum = _lastSortedContainer + 1; containerNum < _containersCount; containerNum++)
+                        // Insert new items in Sort Map 
+                        for (int containerNum = _lastSortedContainer + 1; containerNum < _containersData.Count; containerNum++)
                         {
                             for (int arrayPos = 0; arrayPos < _containersLengths[containerNum]; arrayPos++)
                             {
-                                arrayNewMap[_lastIndex] = new IntInt(containerNum, arrayPos);
-                                _lastIndex++;
+                                var newItem = new IntInt(containerNum, arrayPos);
+                                _sortedMap.Insert(newItem);
                             }
                         }
 
-                        SearchUtils.InsertionSortMap(_containersData, arrayNewMap, _sortedMap.Length);
-
-                        // Apply sorting as current Map
-                        _sortedMap = arrayNewMap;
-                        _lastSortedContainer = _containersCount - 1;
+                        _lastSortedContainer = _containersData.Count - 1;
                     }
                 }
             }
@@ -193,12 +192,12 @@ namespace WcfSortTest.Utils
         /// <returns></returns>
         private IntInt[] GetCurrentMapCopy()
         {
-            IntInt[] currentMap = new IntInt[_sortedMap.Length] ;
+            // TODO: consider to cache sorted map, if there are too many reads ?
+            // Reading IEnumearable/array is O(1) , reading BTree is O(log n)
             lock (_lockMap)
             {
-                Array.Copy(_sortedMap, currentMap, _sortedMap.Length);
+                return _sortedMap.ReadSortedValues();
             }
-            return currentMap;
         }
 
         /// <summary>
